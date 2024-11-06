@@ -3,6 +3,7 @@ export interface Task {
 	title: string;
 	description: string;
 	dueDate: string;
+	dueTime?: string;
 	categoryId?: number;
 	status?: 'pending' | 'in_progress' | 'completed';
 	duration?: number;

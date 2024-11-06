@@ -1,7 +1,10 @@
 <template>
-	<div>
-		<h1>Witaj w aplikacji To Do List!</h1>
-		<p>To jest prosty przykład strony głównej z Tailwind CSS.</p>
+	<div class="p-8 text-center">
+		<h1 class="mb-4 text-4xl font-bold">Welcome to the To-Do List App!</h1>
+		<p class="text-lg">
+			This application helps you manage your daily tasks efficiently by organizing them with categories, tracking time,
+			and providing an intuitive calendar view.
+		</p>
 	</div>
 </template>
 

@@ -15,7 +15,17 @@
 			class="mr-4"
 			>Calendar</router-link
 		>
-		<router-link to="/categories">Categories</router-link>
+		<router-link
+			to="/categories"
+			class="mr-4"
+			>Categories</router-link
+		>
+
+		<router-link
+			to="/timer"
+			class="mr-4"
+			>Timer</router-link
+		>
 	</nav>
 </template>
 
