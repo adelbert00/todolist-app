@@ -12,25 +12,30 @@ const description = ref('');
 const dueDate = ref('');
 const dueTime = ref('');
 const status = ref<'pending' | 'in_progress' | 'completed'>('pending');
+const priority = ref<'high' | 'medium' | 'low'>('medium');
 const categoryId = ref<number | null>(null);
 const newCategoryName = ref('');
-const showCalendar = ref(false);
 
 onMounted(() => {
 	categoryStore.fetchCategories();
 });
 
-async function addTask() {
+async function addTask(startImmediately = false) {
 	const newTask: Task = {
 		id: Date.now(),
 		title: title.value,
 		description: description.value,
 		dueDate: dueDate.value,
 		dueTime: dueTime.value,
-		status: status.value,
+		status: startImmediately ? 'in_progress' : status.value,
+		priority: priority.value,
 		categoryId: categoryId.value ?? undefined,
+		duration: 0,
 	};
 	await taskStore.addTask(newTask);
+	if (startImmediately) {
+		taskStore.startTimer(newTask.id);
+	}
 	resetForm();
 }
 
@@ -47,115 +52,37 @@ function resetForm() {
 	dueDate.value = '';
 	dueTime.value = '';
 	status.value = 'pending';
+	priority.value = 'medium';
 	categoryId.value = null;
 }
 </script>
 
 <template>
-	<div class="tasks-container mx-auto mb-4 max-w-md rounded bg-white p-4 shadow-lg">
-		<h2 class="mb-4 text-lg font-bold">Dodaj Zadanie</h2>
-		<div class="mb-4">
-			<label
-				class="mb-1 block font-semibold"
-				for="title"
-				>Tytuł</label
-			>
+	<div class="task-form-container mx-auto mb-4 max-w-7xl rounded-md bg-white p-4 shadow-md">
+		<div class="flex items-center space-x-4">
 			<input
 				v-model="title"
 				type="text"
-				id="title"
-				class="w-full rounded border p-2"
-				placeholder="Wprowadź tytuł zadania"
+				placeholder="What are you working on?"
+				class="flex-1 rounded border p-2 text-sm"
 			/>
-		</div>
-
-		<div class="mb-4">
-			<label
-				class="mb-1 block font-semibold"
-				for="description"
-				>Opis</label
-			>
-			<textarea
-				v-model="description"
-				id="description"
-				class="w-full rounded border p-2"
-				placeholder="Wprowadź opis zadania"
-			></textarea>
-		</div>
-
-		<div class="mb-4">
-			<label
-				class="mb-1 block font-semibold"
-				for="dueDate"
-				>Termin</label
-			>
-			<input
-				v-model="dueDate"
-				type="date"
-				id="dueDate"
-				class="w-full cursor-pointer rounded border p-2"
-				@focus="showCalendar = true"
-				@blur="showCalendar = false"
-			/>
-		</div>
-
-		<div class="mb-4">
-			<label
-				class="mb-1 block font-semibold"
-				for="dueTime"
-				>Godzina</label
-			>
-			<input
-				v-model="dueTime"
-				type="time"
-				id="dueTime"
-				class="w-full rounded border p-2"
-			/>
-		</div>
-
-		<div class="mb-4">
-			<label
-				class="mb-1 block font-semibold"
-				for="status"
-				>Status</label
-			>
-			<select
-				v-model="status"
-				id="status"
-				class="w-full rounded border p-2"
-			>
-				<option value="pending">Oczekujące</option>
-				<option value="in_progress">W toku</option>
-				<option value="completed">Zakończone</option>
-			</select>
-		</div>
-
-		<div class="mb-4 flex items-center">
 			<input
 				v-model="newCategoryName"
 				type="text"
-				class="mr-2 w-full rounded border p-2"
-				placeholder="Dodaj nową kategorię"
+				placeholder="Add new category"
+				class="flex-1 rounded border p-2 text-sm"
 			/>
 			<button
 				@click="addCategory"
-				class="rounded bg-blue-500 px-4 py-2 text-white"
+				class="rounded bg-purple-500 px-4 py-2 text-sm font-semibold text-white"
 			>
-				Dodaj
+				Add
 			</button>
-		</div>
-
-		<div class="mb-4">
-			<label
-				class="mb-1 block font-semibold"
-				for="categoryId"
-				>Kategoria</label
-			>
 			<select
 				v-model="categoryId"
-				id="categoryId"
-				class="w-full rounded border p-2"
+				class="rounded border p-2 text-sm"
 			>
+				<option :value="null">Select Project</option>
 				<option
 					v-for="category in categoryStore.categories"
 					:key="category.id"
@@ -164,13 +91,53 @@ function resetForm() {
 					{{ category.name }}
 				</option>
 			</select>
-		</div>
 
-		<button
-			@click="addTask"
-			class="w-full rounded bg-green-500 py-2 text-white"
-		>
-			Dodaj Zadanie
-		</button>
+			<select
+				v-model="priority"
+				class="rounded border p-2 text-sm"
+			>
+				<option value="high">High</option>
+				<option value="medium">Medium</option>
+				<option value="low">Low</option>
+			</select>
+
+			<input
+				v-model="dueDate"
+				type="date"
+				class="rounded border p-2 text-sm"
+				placeholder="Due Date"
+			/>
+			<input
+				v-model="dueTime"
+				type="time"
+				class="rounded border p-2 text-sm"
+				placeholder="Due Time"
+			/>
+
+			<select
+				v-model="status"
+				class="rounded border p-2 text-sm"
+			>
+				<option value="pending">Pending</option>
+				<option value="in_progress">In Progress</option>
+				<option value="completed">Completed</option>
+			</select>
+
+			<button
+				@click="addTask(true)"
+				class="rounded bg-blue-500 px-4 py-2 text-sm font-semibold text-white"
+			>
+				Start
+			</button>
+
+			<button
+				@click="addTask(false)"
+				class="rounded bg-green-500 px-4 py-2 text-sm font-semibold text-white"
+			>
+				Add
+			</button>
+		</div>
 	</div>
 </template>
+
+<style scoped></style>

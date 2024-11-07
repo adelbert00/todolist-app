@@ -4,6 +4,7 @@ import TaskPage from '../views/TaskPage.vue';
 import Calendar from '../views/Calendar.vue';
 import Categories from '../views/Categories.vue';
 import Timer from '@/components/Timer.vue';
+import Settings from '@/components/Settings.vue';
 
 const routes = [
 	{ path: '/', component: Home, name: 'Home' },
@@ -11,6 +12,7 @@ const routes = [
 	{ path: '/calendar', component: Calendar, name: 'Calendar' },
 	{ path: '/categories', component: Categories, name: 'Categories' },
 	{ path: '/timer', component: Timer, name: 'Timer' },
+	{ path: '/settings', component: Settings, name: 'Settings' },
 ];
 
 const router = createRouter({

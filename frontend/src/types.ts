@@ -7,6 +7,7 @@ export interface Task {
 	categoryId?: number;
 	status?: 'pending' | 'in_progress' | 'completed';
 	duration?: number;
+	priority?: 'high' | 'medium' | 'low';
 }
 
 export interface Category {

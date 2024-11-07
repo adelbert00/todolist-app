@@ -1,31 +1,18 @@
 <template>
-	<nav class="bg-blue-500 p-4 text-white">
-		<router-link
-			to="/"
-			class="mr-4"
-			>Home</router-link
-		>
-		<router-link
-			to="/tasks"
-			class="mr-4"
-			>Tasks</router-link
-		>
-		<router-link
-			to="/calendar"
-			class="mr-4"
-			>Calendar</router-link
-		>
-		<router-link
-			to="/categories"
-			class="mr-4"
-			>Categories</router-link
-		>
-
-		<router-link
-			to="/timer"
-			class="mr-4"
-			>Timer</router-link
-		>
+	<nav class="flex items-center justify-between bg-blue-500 p-4 text-white">
+		<div class="text-lg font-bold">MyToDoApp</div>
+		<div>
+			<router-link
+				to="/account"
+				class="mr-4"
+				>Account</router-link
+			>
+			<router-link
+				to="/settings"
+				class="mr-4"
+				>Settings</router-link
+			>
+		</div>
 	</nav>
 </template>
 
